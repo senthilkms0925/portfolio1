@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Senthilkumar K // SYSADMIN & SECURITY</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #020a05;
+  --bg2:      #030d07;
+  --panel:    #041008;
+  --panel2:   #071a0d;
+  --green:    #00ff41;
+  --green2:   #00cc33;
+  --green3:   rgba(0,255,65,0.07);
+  --green4:   rgba(0,255,65,0.12);
+  --red:      #ff2d55;
+  --amber:    #ffaa00;
+  --cyan:     #00f5ff;
+  --text:     #c8ffd4;
+  --muted:    #4d7a58;
+  --border:   rgba(0,255,65,0.15);
+  --border2:  rgba(0,255,65,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;overflow-x:hidden;cursor:crosshair;}
+#matrix-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.18;pointer-events:none;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle at 20% 30%,rgba(0,255,65,0.04) 0%,transparent 50%),radial-gradient(circle at 80% 70%,rgba(0,245,255,0.03) 0%,transparent 40%);pointer-events:none;z-index:1;}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:0 60px;height:60px;background:rgba(2,10,5,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Share Tech Mono',monospace;font-size:0.85rem;color:var(--green);letter-spacing:0.06em;display:flex;align-items:center;gap:10px;}
+.nav-logo::before{content:'[ SEC ]';background:var(--green);color:var(--bg);padding:2px 6px;font-size:0.65rem;font-weight:700;}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{font-family:'Share Tech Mono',monospace;font-size:0.72rem;color:var(--muted);text-decoration:none;letter-spacing:0.12em;text-transform:uppercase;transition:color 0.2s;display:flex;align-items:center;gap:6px;}
+.nav-links a::before{content:'>';color:var(--green);opacity:0;transition:opacity 0.2s;}
+.nav-links a:hover{color:var(--green);}
+.nav-links a:hover::before{opacity:1;}
+.nav-status{font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--green);display:flex;align-items:center;gap:6px;border:1px solid var(--border);padding:5px 12px;}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,255,65,0.6)}50%{box-shadow:0 0 0 6px rgba(0,255,65,0)}}
+.hero{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;padding:100px 60px 80px;overflow:hidden;}
+.hero::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--green),transparent);animation:scanline 4s linear infinite;opacity:0.4;}
+@keyframes scanline{0%{top:0}100%{top:100%}}
+.hero-inner{max-width:1200px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 460px;gap:80px;align-items:center;}
+.terminal{background:var(--panel);border:1px solid var(--border);font-family:'Share Tech Mono',monospace;position:relative;box-shadow:0 0 40px rgba(0,255,65,0.06),inset 0 0 60px rgba(0,0,0,0.4);}
+.terminal-bar{background:var(--panel2);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:8px;font-size:0.65rem;color:var(--muted);}
+.t-dot{width:10px;height:10px;border-radius:50%;}
+.t-red{background:var(--red);}.t-amber{background:var(--amber);}.t-green{background:var(--green);}
+.t-title{margin-left:auto;color:var(--muted);}
+.terminal-body{padding:24px 20px;min-height:240px;}
+.t-line{font-size:0.78rem;line-height:1.8;color:var(--muted);display:flex;gap:8px;opacity:0;animation:fadeIn 0.3s ease forwards;}
+.t-line.green{color:var(--green);}.t-line.cyan{color:var(--cyan);}.t-line.amber{color:var(--amber);}.t-line.red{color:var(--red);}.t-line.white{color:var(--text);}
+.t-prompt{color:var(--green);flex-shrink:0;}
+.cursor-blink{display:inline-block;background:var(--green);width:8px;height:14px;vertical-align:middle;animation:blink 1s step-end infinite;}
+@keyframes blink{50%{opacity:0}}
+.dl1{animation-delay:.5s}.dl2{animation-delay:1.2s}.dl3{animation-delay:2s}.dl4{animation-delay:2.7s}.dl5{animation-delay:3.4s}.dl6{animation-delay:4.1s}.dl7{animation-delay:4.8s}.dl8{animation-delay:5.5s}
+@keyframes fadeIn{to{opacity:1}}
+.hero-eyebrow{font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--green);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:10px;}
+.hero-eyebrow::before{content:'';width:28px;height:1px;background:var(--green);}
+.threat-level{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(0,255,65,0.3);padding:5px 14px;margin-bottom:20px;font-family:'Share Tech Mono',monospace;font-size:0.62rem;color:var(--green);background:var(--green3);letter-spacing:0.1em;}
+.threat-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s ease-in-out infinite;}
+h1{font-size:clamp(3rem,5vw,5.2rem);font-weight:800;line-height:0.98;letter-spacing:-0.02em;margin-bottom:12px;color:var(--text);}
+h1 .name-accent{color:var(--green);display:block;}
+h1 .glitch{position:relative;display:block;animation:glitch 5s infinite;}
+@keyframes glitch{0%,94%,100%{transform:none;text-shadow:none;}95%{transform:skewX(-5deg);text-shadow:3px 0 var(--cyan),-3px 0 var(--red);}97%{transform:skewX(3deg);text-shadow:-2px 0 var(--green),2px 0 var(--red);}}
+.hero-role{font-family:'Share Tech Mono',monospace;font-size:0.82rem;color:var(--muted);letter-spacing:0.16em;text-transform:uppercase;margin-bottom:24px;}
+.hero-desc{font-size:0.97rem;color:rgba(200,255,212,0.55);line-height:1.75;max-width:500px;margin-bottom:38px;font-weight:300;}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-hack{font-family:'Share Tech Mono',monospace;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;padding:12px 28px;text-decoration:none;border:1px solid var(--green);color:var(--bg);background:var(--green);transition:all 0.2s;position:relative;overflow:hidden;}
+.btn-hack::before{content:'';position:absolute;inset:0;background:var(--green2);transform:translateX(-100%);transition:transform 0.2s;}
+.btn-hack:hover::before{transform:translateX(0);}
+.btn-hack span{position:relative;z-index:1;}
+.btn-ghost-hack{font-family:'Share Tech Mono',monospace;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;padding:12px 28px;text-decoration:none;border:1px solid var(--border);color:var(--green);background:transparent;transition:all 0.2s;}
+.btn-ghost-hack:hover{border-color:var(--green);background:var(--green3);}
+.stats-strip{position:relative;z-index:2;background:var(--panel);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.stats-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);}
+.stat-item{padding:28px 32px;border-right:1px solid var(--border2);position:relative;overflow:hidden;transition:background 0.2s;}
+.stat-item:last-child{border-right:none;}
+.stat-item:hover{background:var(--green3);}
+.stat-item::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:var(--green);transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+.stat-item:hover::before{transform:scaleX(1);}
+.stat-num{font-family:'Share Tech Mono',monospace;font-size:2.2rem;color:var(--green);line-height:1;margin-bottom:4px;text-shadow:0 0 20px rgba(0,255,65,0.4);}
+.stat-label{font-size:0.75rem;color:var(--muted);letter-spacing:0.06em;}
+.wrap{max-width:1200px;margin:0 auto;padding:0 60px;position:relative;z-index:2;}
+.section{padding:88px 0;border-bottom:1px solid var(--border2);}
+.sec-header{margin-bottom:48px;}
+.sec-tag{font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--green);letter-spacing:0.2em;text-transform:uppercase;display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.sec-tag::before{content:'[ ';}.sec-tag::after{content:' ]';}
+.sec-title{font-size:clamp(1.6rem,2.5vw,2.2rem);font-weight:700;color:var(--text);letter-spacing:-0.01em;}
+.skills-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--border2);}
+.skill-card{background:var(--panel);padding:18px 16px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;transition:background 0.2s;cursor:default;border-top:1px solid transparent;}
+.skill-card:hover{background:var(--panel2);border-top-color:var(--green);}
+.skill-icon{font-size:1.1rem;flex-shrink:0;filter:drop-shadow(0 0 4px rgba(0,255,65,0.3));}
+.skill-name{font-size:0.86rem;font-weight:600;color:var(--text);}
+.exp-wrap{background:var(--panel);border:1px solid var(--border);position:relative;overflow:hidden;}
+.exp-wrap::before,.exp-wrap::after{content:'';position:absolute;width:20px;height:20px;border-color:var(--green);border-style:solid;}
+.exp-wrap::before{top:0;left:0;border-width:2px 0 0 2px;}
+.exp-wrap::after{bottom:0;right:0;border-width:0 2px 2px 0;}
+.exp-inner{padding:44px;}
+.exp-meta-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:10px;}
+.exp-company{font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--cyan);letter-spacing:0.15em;text-transform:uppercase;}
+.exp-date{font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--muted);border:1px solid var(--border);padding:5px 12px;background:var(--panel2);}
+.exp-role{font-size:1.7rem;font-weight:800;color:var(--text);letter-spacing:-0.01em;margin-bottom:28px;}
+.exp-role span{color:var(--green);}
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 36px;}
+.exp-item{font-size:0.9rem;color:rgba(200,255,212,0.6);line-height:1.65;padding-left:20px;position:relative;}
+.exp-item::before{content:'▶';position:absolute;left:0;color:var(--green);font-size:0.55rem;top:5px;}
+.projects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border2);}
+.proj-card{background:var(--panel);padding:28px 24px;position:relative;overflow:hidden;transition:background 0.25s;}
+.proj-card:hover{background:var(--panel2);}
+.proj-card::before{content:'';position:absolute;left:0;top:-100%;width:100%;height:100%;background:linear-gradient(to bottom,transparent,rgba(0,255,65,0.04),transparent);transition:top 0.4s ease;}
+.proj-card:hover::before{top:100%;}
+.proj-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--cyan));transform:scaleX(0);transform-origin:left;transition:transform 0.3s;}
+.proj-card:hover::after{transform:scaleX(1);}
+.proj-id{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--green);letter-spacing:0.2em;margin-bottom:12px;opacity:0.7;}
+.proj-title{font-size:0.98rem;font-weight:700;color:var(--text);margin-bottom:10px;line-height:1.35;}
+.proj-desc{font-size:0.83rem;color:var(--muted);line-height:1.65;margin-bottom:16px;font-weight:300;}
+.tags{display:flex;flex-wrap:wrap;gap:5px;}
+.tag{font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--green);background:var(--green3);border:1px solid var(--border);padding:3px 8px;letter-spacing:0.04em;}
+.cred-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--border2);}
+.cred-card{background:var(--panel);padding:36px;position:relative;overflow:hidden;}
+.cred-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(to bottom,var(--green),transparent);}
+.cred-type{font-family:'Share Tech Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--green);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.cred-type::before{content:'//';color:var(--muted);}
+.cred-title{font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:8px;}
+.cred-sub{font-size:0.86rem;color:var(--muted);line-height:1.6;font-weight:300;}
+.cert-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,170,0,0.1);border:1px solid rgba(255,170,0,0.3);color:var(--amber);font-family:'Share Tech Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;padding:5px 12px;margin-bottom:14px;}
+.contact-section{position:relative;z-index:2;background:var(--panel);border-top:1px solid var(--border);}
+.contact-inner{max-width:1200px;margin:0 auto;padding:80px 60px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+.contact-title{font-size:2rem;font-weight:800;color:var(--text);margin-bottom:12px;}
+.contact-title span{color:var(--green);}
+.contact-sub{font-size:0.92rem;color:var(--muted);line-height:1.7;font-weight:300;}
+.contact-terminal{background:var(--bg2);border:1px solid var(--border);font-family:'Share Tech Mono',monospace;}
+.ct-bar{background:var(--panel2);border-bottom:1px solid var(--border);padding:8px 14px;font-size:0.62rem;color:var(--muted);display:flex;gap:6px;align-items:center;}
+.ct-body{padding:20px;}
+.ct-row{font-size:0.78rem;line-height:2;display:flex;align-items:center;gap:12px;}
+.ct-key{color:var(--green);flex-shrink:0;min-width:60px;}
+.ct-val{color:var(--text);}
+.ct-sep{color:var(--muted);}
+footer{position:relative;z-index:2;text-align:center;padding:28px 60px;border-top:1px solid var(--border2);font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--muted);letter-spacing:0.06em;}
+footer span{color:var(--green);}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--green2);}
+@keyframes heroFadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.fu{animation:heroFadeUp 0.7s ease forwards;opacity:0;}
+.h1{animation-delay:.1s}.h2{animation-delay:.25s}.h3{animation-delay:.4s}.h4{animation-delay:.55s}.h5{animation-delay:.7s}
+@media(max-width:1000px){
+  nav{padding:0 24px}
+  .hero,.wrap{padding-left:24px;padding-right:24px}
+  .hero-inner{grid-template-columns:1fr;gap:48px}
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
+  .skills-grid{grid-template-columns:repeat(2,1fr)}
+  .exp-grid{grid-template-columns:1fr}
+  .projects-grid{grid-template-columns:repeat(2,1fr)}
+  .cred-grid{grid-template-columns:1fr}
+  .contact-inner{grid-template-columns:1fr;padding:48px 24px}
+}
+@media(max-width:600px){
+  .nav-links{display:none}
+  .projects-grid{grid-template-columns:1fr}
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<canvas id="matrix-canvas"></canvas>
+<nav>
+  <div class="nav-logo">SENTHILKUMAR_K</div>
+  <ul class="nav-links">
+    <li><a href="#about">about</a></li>
+    <li><a href="#skills">skills</a></li>
+    <li><a href="#experience">exp</a></li>
+    <li><a href="#projects">projects</a></li>
+    <li><a href="#contact">contact</a></li>
+  </ul>
+  <div class="nav-status"><span class="status-dot"></span> SYSTEM_ONLINE</div>
+</nav>
+
+<div class="hero" id="about">
+  <div class="hero-inner">
+    <div>
+      <div class="threat-level fu h1"><span class="threat-dot"></span> CLEARANCE: ACTIVE &nbsp;|&nbsp; THREAT_LEVEL: LOW</div>
+      <div class="hero-eyebrow fu h1">Security-Focused Linux Sysadmin</div>
+      <h1 class="fu h2">
+        <span class="glitch">Senthil</span>
+        <span class="name-accent">kumar K</span>
+      </h1>
+      <div class="hero-role fu h2">// Infrastructure · Security · Automation</div>
+      <p class="hero-desc fu h3">Dedicated and performance-driven IT professional with 3+ years of hands-on experience in Linux system administration, network infrastructure management, and open-source IT solutions. Specializing in system stability, threat mitigation, and secure operations.</p>
+      <div class="hero-btns fu h4">
+        <a href="#contact" class="btn-hack"><span>[ Initiate Contact ]</span></a>
+        <a href="#projects" class="btn-ghost-hack">View Projects &gt;</a>
+      </div>
+    </div>
+    <div class="terminal fu h5">
+      <div class="terminal-bar">
+        <span class="t-dot t-red"></span><span class="t-dot t-amber"></span><span class="t-dot t-green"></span>
+        <span class="t-title">root@senthil-srv:~ — bash</span>
+      </div>
+      <div class="terminal-body">
+        <div class="t-line green dl1"><span class="t-prompt">root@srv:~$</span><span>whoami</span></div>
+        <div class="t-line white dl2"><span>&nbsp;&nbsp;Senthilkumar K — Linux SysAdmin</span></div>
+        <div class="t-line green dl3"><span class="t-prompt">root@srv:~$</span><span>uptime --since</span></div>
+        <div class="t-line cyan dl4"><span>&nbsp;&nbsp;Active since: Aug 2022 — Present</span></div>
+        <div class="t-line green dl5"><span class="t-prompt">root@srv:~$</span><span>cat /etc/skills</span></div>
+        <div class="t-line amber dl6"><span>&nbsp;&nbsp;Linux · Network · Security · Bash</span></div>
+        <div class="t-line green dl7"><span class="t-prompt">root@srv:~$</span><span>ping -c1 opportunity</span></div>
+        <div class="t-line white dl8"><span>&nbsp;&nbsp;OPEN TO WORK — 1 packet transmitted <span class="cursor-blink"></span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">Linux Servers Managed</div></div>
+    <div class="stat-item"><div class="stat-num">3+</div><div class="stat-label">Years Experience</div></div>
+    <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Security Projects</div></div>
+    <div class="stat-item"><div class="stat-num">1</div><div class="stat-label">CWASP Certification</div></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="section" id="skills">
+    <div class="sec-header"><div class="sec-tag">Technical Arsenal</div><div class="sec-title">Core Competencies</div></div>
+    <div class="skills-grid">
+      <div class="skill-card"><span class="skill-icon">🐧</span><span class="skill-name">Linux Administration</span></div>
+      <div class="skill-card"><span class="skill-icon">☁️</span><span class="skill-name">Cloud Technologies</span></div>
+      <div class="skill-card"><span class="skill-icon">🌐</span><span class="skill-name">Network Configuration</span></div>
+      <div class="skill-card"><span class="skill-icon">🔒</span><span class="skill-name">Security Tools</span></div>
+      <div class="skill-card"><span class="skill-icon">⚙️</span><span class="skill-name">Bash Scripting</span></div>
+      <div class="skill-card"><span class="skill-icon">📊</span><span class="skill-name">Monitoring Tools</span></div>
+      <div class="skill-card"><span class="skill-icon">🌍</span><span class="skill-name">Web Servers (Apache/Nginx)</span></div>
+      <div class="skill-card"><span class="skill-icon">🗄️</span><span class="skill-name">Database Management</span></div>
+      <div class="skill-card"><span class="skill-icon">💾</span><span class="skill-name">Backup Solutions</span></div>
+      <div class="skill-card"><span class="skill-icon">📦</span><span class="skill-name">Asset Management</span></div>
+      <div class="skill-card"><span class="skill-icon">🔧</span><span class="skill-name">Hardware Troubleshooting</span></div>
+      <div class="skill-card"><span class="skill-icon">💬</span><span class="skill-name">Internal Comms Platforms</span></div>
+    </div>
+  </div>
+
+  <div class="section" id="experience">
+    <div class="sec-header"><div class="sec-tag">Work History</div><div class="sec-title">Experience</div></div>
+    <div class="exp-wrap">
+      <div class="exp-inner">
+        <div class="exp-meta-bar">
+          <div class="exp-company">// Novalnet E-Solutions Pvt Ltd</div>
+          <div class="exp-date">AUG_2022 — PRESENT</div>
+        </div>
+        <div class="exp-role">Linux System <span>Administrator</span></div>
+        <div class="exp-grid">
+          <div class="exp-item">Managed 50+ Linux servers (Ubuntu, CentOS, Red Hat) ensuring high availability and performance.</div>
+          <div class="exp-item">Configured LAN/WAN, VLANs, routing protocols, and deployed routers and switches.</div>
+          <div class="exp-item">Administered DNS, DHCP, VPN, FTP, and SSH services across the organization.</div>
+          <div class="exp-item">Automated monitoring, backups, and routine tasks using Bash scripting and cron jobs.</div>
+          <div class="exp-item">Implemented security policies, log monitoring, and proactive threat mitigation.</div>
+          <div class="exp-item">Integrated asset management and internal communication tools for IT operations.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="projects">
+    <div class="sec-header"><div class="sec-tag">Deployed Modules</div><div class="sec-title">Projects</div></div>
+    <div class="projects-grid">
+      <div class="proj-card"><div class="proj-id">// MOD_01</div><div class="proj-title">Server Monitoring & Automation System</div><div class="proj-desc">Automated CPU/RAM/Disk/Network metrics collection with API-integrated alerts for failures and anomalies.</div><div class="tags"><span class="tag">Bash</span><span class="tag">Cron</span><span class="tag">cURL</span><span class="tag">jq</span><span class="tag">Systemd</span></div></div>
+      <div class="proj-card"><div class="proj-id">// MOD_02</div><div class="proj-title">Web Application Hosting & Deployment</div><div class="proj-desc">Apache/Nginx hosting with SSL config, automated backups and server hardening to minimize downtime.</div><div class="tags"><span class="tag">Apache</span><span class="tag">Nginx</span><span class="tag">MySQL</span><span class="tag">MariaDB</span><span class="tag">Git</span></div></div>
+      <div class="proj-card"><div class="proj-id">// MOD_03</div><div class="proj-title">MySQL Database Performance Monitor</div><div class="proj-desc">Real-time slow query identification with general/slow log automation and reporting pipeline.</div><div class="tags"><span class="tag">MySQL</span><span class="tag">Bash</span><span class="tag">Cron</span><span class="tag">Log Parsing</span></div></div>
+      <div class="proj-card"><div class="proj-id">// MOD_04</div><div class="proj-title">Secure Remote Shutdown Automation</div><div class="proj-desc">Zenity-based user confirmation prompts with full email audit trail for accountability.</div><div class="tags"><span class="tag">SSH</span><span class="tag">Zenity</span><span class="tag">Bash</span><span class="tag">Email Auto</span></div></div>
+      <div class="proj-card"><div class="proj-id">// MOD_05</div><div class="proj-title">Network & Log Security Alert System</div><div class="proj-desc">Brute-force detection and log anomaly rules for proactive real-time threat neutralization.</div><div class="tags"><span class="tag">Rsyslog</span><span class="tag">UFW</span><span class="tag">Firewalld</span><span class="tag">Fail2ban</span></div></div>
+      <div class="proj-card"><div class="proj-id">// MOD_06</div><div class="proj-title">Linux Patch Management Automation</div><div class="proj-desc">Automated update rollout with rollback capability and security compliance reporting.</div><div class="tags"><span class="tag">Bash</span><span class="tag">APT/YUM</span><span class="tag">Cron</span><span class="tag">Ansible</span></div></div>
+    </div>
+  </div>
+
+  <div class="section" id="education">
+    <div class="sec-header"><div class="sec-tag">Credentials</div><div class="sec-title">Education & Certification</div></div>
+    <div class="cred-grid">
+      <div class="cred-card">
+        <div class="cred-type">Education</div>
+        <div class="cred-title">Bachelors in Computer Application</div>
+        <div class="cred-sub">Sree Saraswathi Thyagaraj College, Pollachi<br><span style="color:var(--muted);font-size:0.8rem;">2017 – 2020</span></div>
+      </div>
+      <div class="cred-card">
+        <div class="cert-badge">⚡ CERTIFIED</div>
+        <div class="cred-type">Security Certification</div>
+        <div class="cred-title">CWASP Network Intelligence</div>
+        <div class="cred-sub">Certified in web application vulnerabilities and penetration testing. Covers real-world security assessments, vulnerability identification, and ethical hacking techniques.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div class="contact-left">
+      <div class="sec-tag" style="margin-bottom:12px;">Establish Connection</div>
+      <div class="contact-title">Let's <span>Connect</span></div>
+      <div class="contact-sub">Open to opportunities in Linux Administration, Network Security, and IT Infrastructure. Ready to contribute to your organization's security posture.</div>
+    </div>
+    <div class="contact-terminal">
+      <div class="ct-bar">
+        <span class="t-dot t-red"></span><span class="t-dot t-amber"></span><span class="t-dot t-green"></span>
+        &nbsp; contact.sh
+      </div>
+      <div class="ct-body">
+        <div class="ct-row"><span class="ct-key">phone</span><span class="ct-sep">::</span><span class="ct-val">+91 9600366356</span></div>
+        <div class="ct-row"><span class="ct-key">email</span><span class="ct-sep">::</span><span class="ct-val">senthilkms0925@gmail.com</span></div>
+        <div class="ct-row"><span class="ct-key">city</span><span class="ct-sep">::</span><span class="ct-val">Chennai, Tamil Nadu</span></div>
+        <div class="ct-row"><span class="ct-key">status</span><span class="ct-sep">::</span><span class="ct-val" style="color:var(--green)">OPEN_TO_WORK <span class="cursor-blink"></span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer><span>[ SEC ]</span> &nbsp; © 2026 SENTHILKUMAR_K &nbsp;·&nbsp; LINUX_SYSADMIN &nbsp;·&nbsp; CHENNAI_IN &nbsp;<span>[ /SEC ]</span></footer>
+
+<script>
+const canvas = document.getElementById('matrix-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; initDrops(); });
+const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@!%^&*<>?/\\|{}[]アイウエオカキクケコサシスセソ';
+const fontSize = 13;
+let columns, drops;
+function initDrops() { columns = Math.floor(canvas.width / fontSize); drops = Array(columns).fill(1); }
+initDrops();
+function drawMatrix() {
+  ctx.fillStyle = 'rgba(2,10,5,0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.font = fontSize + 'px Share Tech Mono, monospace';
+  for (let i = 0; i < drops.length; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillStyle = Math.random() > 0.92 ? '#00ff41' : '#006622';
+    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+}
+setInterval(drawMatrix, 50);
+</script>
+</body>
+</html>
